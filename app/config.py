@@ -1,5 +1,7 @@
 from pydantic_settings import BaseSettings
+from pydantic import field_validator
 from functools import lru_cache
+from typing import Union
 
 
 class Settings(BaseSettings):
@@ -35,8 +37,15 @@ class Settings(BaseSettings):
     secret_key: str = "change-this-in-production"
     access_token_expire_minutes: int = 60 * 24 * 7  # 7 days
 
-    # CORS
-    cors_origins: list[str] = ["http://localhost:3000", "https://aiqso.io"]
+    # CORS - accepts comma-separated string or list
+    cors_origins: Union[str, list[str]] = "http://localhost:3000,https://aiqso.io"
+
+    @field_validator("cors_origins", mode="before")
+    @classmethod
+    def parse_cors_origins(cls, v):
+        if isinstance(v, str):
+            return [origin.strip() for origin in v.split(",") if origin.strip()]
+        return v
 
     # Lighthouse
     lighthouse_enabled: bool = True
