@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy import text
 from app.database import get_db
 from app.config import get_settings
 
@@ -21,7 +22,7 @@ async def health_check():
 async def database_health(db: Session = Depends(get_db)):
     """Database health check."""
     try:
-        db.execute("SELECT 1")
+        db.execute(text("SELECT 1"))
         return {"status": "healthy", "database": "connected"}
     except Exception as e:
-        return {"status": "unhealthy", "database": str(e)}
+        raise HTTPException(status_code=503, detail=f"Database unhealthy: {e}")

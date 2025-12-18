@@ -1,0 +1,48 @@
+# Starter Tier - Entry Level Paid Plan
+# Basic SEO monitoring for small businesses
+
+name: starter
+display_name: "Starter"
+description: "Basic SEO monitoring for small businesses"
+price_monthly: 49
+price_annually: 470  # ~20% discount
+
+# Rate limits
+rate_limits:
+  audits_per_day: 10
+  audits_per_hour: 5
+  keywords_tracked: 50
+  websites: 1
+
+# Features
+features:
+  ai_insights: false
+  lighthouse_integration: true
+  full_site_crawl: true
+  api_access: false
+  cli_access: false
+  pdf_reports: true
+  white_label: false
+  priority_support: false
+
+# Any domain allowed
+allowed_domains: null
+
+# Audit settings
+audit_settings:
+  max_pages_per_crawl: 50
+  max_depth: 3
+  include_lighthouse: true
+  include_ai_insights: false
+  concurrent_requests: 2
+
+# Authentication
+auth:
+  type: api_key
+  require_auth: true
+
+# Billing
+billing:
+  stripe_price_id_monthly: price_starter_monthly
+  stripe_price_id_annually: price_starter_annually
+  trial_days: 14

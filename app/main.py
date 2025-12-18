@@ -1,10 +1,13 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from app.config import get_settings
+from app.logging_config import configure_logging
 from app.database import init_db
 from app.routers import audits, clients, websites, keywords, reports, health
+from app.routers import billing, worklog, portal, odoo
+from app.security import require_client
 
 settings = get_settings()
 
@@ -13,6 +16,8 @@ settings = get_settings()
 async def lifespan(app: FastAPI):
     """Application lifespan events."""
     # Startup
+    configure_logging(level=settings.log_level, json_logs=settings.log_json)
+    settings.validate_runtime()
     init_db()
     yield
     # Shutdown
@@ -58,11 +63,59 @@ app.add_middleware(
 
 # Include routers
 app.include_router(health.router, tags=["Health"])
-app.include_router(clients.router, prefix=f"{settings.api_prefix}/clients", tags=["Clients"])
-app.include_router(websites.router, prefix=f"{settings.api_prefix}/websites", tags=["Websites"])
-app.include_router(audits.router, prefix=f"{settings.api_prefix}/audits", tags=["Audits"])
-app.include_router(keywords.router, prefix=f"{settings.api_prefix}/keywords", tags=["Keywords"])
-app.include_router(reports.router, prefix=f"{settings.api_prefix}/reports", tags=["Reports"])
+auth_dependencies = [Depends(require_client)]
+
+app.include_router(
+    clients.router,
+    prefix=f"{settings.api_prefix}/clients",
+    tags=["Clients"],
+    dependencies=auth_dependencies,
+)
+app.include_router(
+    websites.router,
+    prefix=f"{settings.api_prefix}/websites",
+    tags=["Websites"],
+    dependencies=auth_dependencies,
+)
+app.include_router(
+    audits.router,
+    prefix=f"{settings.api_prefix}/audits",
+    tags=["Audits"],
+    dependencies=auth_dependencies,
+)
+app.include_router(
+    keywords.router,
+    prefix=f"{settings.api_prefix}/keywords",
+    tags=["Keywords"],
+    dependencies=auth_dependencies,
+)
+app.include_router(
+    reports.router,
+    prefix=f"{settings.api_prefix}/reports",
+    tags=["Reports"],
+    dependencies=auth_dependencies,
+)
+
+# New routers for customer platform
+app.include_router(billing.router, prefix=f"{settings.api_prefix}", tags=["Billing"])
+app.include_router(
+    worklog.router,
+    prefix=f"{settings.api_prefix}",
+    tags=["Work Log"],
+    dependencies=auth_dependencies,
+)
+app.include_router(
+    portal.router,
+    prefix=f"{settings.api_prefix}",
+    tags=["Customer Portal"],
+    dependencies=auth_dependencies,
+)
+app.include_router(
+    odoo.router,
+    prefix=f"{settings.api_prefix}",
+    tags=["Odoo Integration"],
+    dependencies=auth_dependencies,
+)
 
 
 @app.get("/")

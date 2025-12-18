@@ -1,0 +1,49 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+env/
+.env
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+logs/
+*.log
+
+# Local development
+.env.local
+*.sqlite
+*.db
+
+# Docker
+.docker/
+
+# Node (dashboard is built separately)
+dashboard/node_modules/
+dashboard/.next/
+
+# Misc
+.DS_Store
+Thumbs.db
+*.md
+!README.md

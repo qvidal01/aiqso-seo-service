@@ -3,6 +3,9 @@ from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from app.config import get_settings
 from app.models import Base
+import logging
+
+logger = logging.getLogger(__name__)
 
 settings = get_settings()
 
@@ -47,4 +50,12 @@ async def get_async_db() -> AsyncSession:
 
 def init_db():
     """Create all database tables."""
+    if not settings.db_auto_create:
+        logger.info("DB_AUTO_CREATE disabled; skipping metadata.create_all()")
+        return
+
+    logger.warning(
+        "Creating database tables via SQLAlchemy metadata (DB_AUTO_CREATE=true). "
+        "For production, prefer Alembic migrations and set DB_AUTO_CREATE=false."
+    )
     Base.metadata.create_all(bind=sync_engine)

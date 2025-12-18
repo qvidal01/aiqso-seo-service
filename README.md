@@ -51,11 +51,9 @@ Enterprise SEO auditing, rank tracking, and optimization platform.
 
 ## Quick Start
 
-```bash
-# Clone and setup
-git clone https://github.com/qvidal01/aiqso-seo-service.git
-cd aiqso-seo-service
+### Local (API only)
 
+```bash
 # Install dependencies
 pip install -r requirements.txt
 
@@ -63,15 +61,45 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8002
 ```
 
-## Environment Variables
+### Docker Compose (recommended)
+
+```bash
+cp .env.example .env
+docker-compose up -d --build
+```
+
+- API: `http://localhost:8002` (docs at `/docs`)
+- Dashboard: `http://localhost:3000`
+- SerpBear: `http://localhost:3001`
+
+## Configuration
+
+Environment variables are loaded via `app/config.py` (Pydantic Settings). A template is provided in `.env.example`.
+
+See `docs/CONFIGURATION.md` for the full list and defaults.
+
+### Minimal Environment Variables
+
+At minimum, set:
+
+- `DATABASE_URL`
+- `REDIS_URL` (if running Celery)
+- `SECRET_KEY` (required for `staging`/`production`)
 
 ```bash
 DATABASE_URL=postgresql://user:pass@localhost:5432/seo_service
-SERPBEAR_API_URL=http://localhost:3000/api
+SERPBEAR_URL=http://localhost:3000
 SERPBEAR_API_KEY=your_api_key
 SCRAPING_API_KEY=your_scrapingant_key
 ANTHROPIC_API_KEY=your_claude_key
 ```
+
+## Security
+
+- Optional API key enforcement is controlled by `REQUIRE_API_KEY` (default: `false`).
+- When enabled, most API routes require either:
+  - `X-API-Key: <client api key>` or
+  - `Authorization: Bearer <client api key>`
 
 ## Deployment
 
@@ -80,6 +108,30 @@ Deploy on Proxmox LXC with Docker Compose:
 ```bash
 docker-compose up -d
 ```
+
+## Development
+
+### Celery
+
+```bash
+celery -A app.celery_app worker --loglevel=info
+celery -A app.celery_app beat --loglevel=info
+```
+
+Or use `scripts/start_celery.sh`.
+
+### Tests
+
+```bash
+pytest -q
+```
+
+## Docs
+
+- `ARCHITECTURE.md`
+- `docs/CONFIGURATION.md`
+- `IMPLEMENTATION_NOTES.md`
+- `CHANGELOG.md`
 
 ## License
 
