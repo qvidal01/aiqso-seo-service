@@ -3,6 +3,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { CreditCard, Check, ArrowRight, Receipt, Calendar } from 'lucide-react';
 import api from '@/lib/api';
+import type { Payment } from '@/types';
 
 const plans = [
   {
@@ -186,7 +187,7 @@ export default function BillingPage() {
         </div>
 
         <div className="divide-y divide-gray-200">
-          {payments?.map((payment: any) => (
+          {payments?.map((payment: Payment) => (
             <div key={payment.id} className="px-6 py-4 flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <div className="p-2 bg-gray-100 rounded-lg">

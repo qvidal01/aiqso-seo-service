@@ -4,6 +4,11 @@ import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { Plus, ExternalLink, RefreshCw } from 'lucide-react';
 import api from '@/lib/api';
+import type { Website } from '@/types';
+
+interface GlobeProps extends React.SVGProps<SVGSVGElement> {
+  className?: string;
+}
 
 export default function WebsitesPage() {
   const {
@@ -20,7 +25,7 @@ export default function WebsitesPage() {
       await api.requestAudit(websiteId);
       alert('Audit requested! Check back in a few minutes.');
       refetch();
-    } catch (error) {
+    } catch {
       alert('Failed to request audit');
     }
   };
@@ -49,14 +54,14 @@ export default function WebsitesPage() {
 
       {/* Websites Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {websites?.map((site: any) => (
+        {websites?.map((site: Website) => (
           <div key={site.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             {/* Header with score */}
             <div
               className={`px-6 py-4 ${
-                site.last_audit_score >= 80
+                site.last_audit_score !== null && site.last_audit_score >= 80
                   ? 'bg-green-50'
-                  : site.last_audit_score >= 60
+                  : site.last_audit_score !== null && site.last_audit_score >= 60
                     ? 'bg-yellow-50'
                     : 'bg-red-50'
               }`}
@@ -82,14 +87,14 @@ export default function WebsitesPage() {
               <div className="mt-2">
                 <span
                   className={`text-3xl font-bold ${
-                    site.last_audit_score >= 80
+                    site.last_audit_score !== null && site.last_audit_score >= 80
                       ? 'text-green-600'
-                      : site.last_audit_score >= 60
+                      : site.last_audit_score !== null && site.last_audit_score >= 60
                         ? 'text-yellow-600'
                         : 'text-red-600'
                   }`}
                 >
-                  {site.last_audit_score || 'N/A'}
+                  {site.last_audit_score ?? 'N/A'}
                 </span>
                 <span className="text-gray-500 ml-1">/100</span>
               </div>
@@ -150,7 +155,7 @@ export default function WebsitesPage() {
   );
 }
 
-function Globe(props: any) {
+function Globe(props: GlobeProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

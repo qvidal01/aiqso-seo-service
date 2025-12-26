@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { AlertCircle, CheckCircle2, Clock, Filter, ExternalLink } from 'lucide-react';
 import api from '@/lib/api';
 import { useState } from 'react';
+import type { Issue, StatusFilter, SeverityFilter } from '@/types';
 
 const severityColors = {
   critical: 'bg-red-100 text-red-800 border-red-200',
@@ -18,17 +19,15 @@ const statusColors = {
 };
 
 export default function IssuesPage() {
-  const [filter, setFilter] = useState<'all' | 'open' | 'in_progress' | 'resolved'>('all');
-  const [severityFilter, setSeverityFilter] = useState<'all' | 'critical' | 'warning' | 'info'>(
-    'all'
-  );
+  const [filter, setFilter] = useState<StatusFilter>('all');
+  const [severityFilter, setSeverityFilter] = useState<SeverityFilter>('all');
 
   const { data: issues, isLoading } = useQuery({
     queryKey: ['issues'],
     queryFn: () => api.getIssues(),
   });
 
-  const filteredIssues = issues?.filter((issue: any) => {
+  const filteredIssues = issues?.filter((issue: Issue) => {
     if (filter !== 'all' && issue.status !== filter) return false;
     if (severityFilter !== 'all' && issue.severity !== severityFilter) return false;
     return true;
@@ -44,9 +43,9 @@ export default function IssuesPage() {
 
   const stats = {
     total: issues?.length || 0,
-    critical: issues?.filter((i: any) => i.severity === 'critical').length || 0,
-    warning: issues?.filter((i: any) => i.severity === 'warning').length || 0,
-    open: issues?.filter((i: any) => i.status === 'open').length || 0,
+    critical: issues?.filter((i: Issue) => i.severity === 'critical').length || 0,
+    warning: issues?.filter((i: Issue) => i.severity === 'warning').length || 0,
+    open: issues?.filter((i: Issue) => i.status === 'open').length || 0,
   };
 
   return (
@@ -86,7 +85,7 @@ export default function IssuesPage() {
           <span className="text-sm text-gray-500">Status:</span>
           <select
             value={filter}
-            onChange={(e) => setFilter(e.target.value as any)}
+            onChange={(e) => setFilter(e.target.value as StatusFilter)}
             className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500"
           >
             <option value="all">All</option>
@@ -99,7 +98,7 @@ export default function IssuesPage() {
           <span className="text-sm text-gray-500">Severity:</span>
           <select
             value={severityFilter}
-            onChange={(e) => setSeverityFilter(e.target.value as any)}
+            onChange={(e) => setSeverityFilter(e.target.value as SeverityFilter)}
             className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500"
           >
             <option value="all">All</option>
@@ -112,7 +111,7 @@ export default function IssuesPage() {
 
       {/* Issues List */}
       <div className="space-y-4">
-        {filteredIssues?.map((issue: any) => (
+        {filteredIssues?.map((issue: Issue) => (
           <div
             key={issue.id}
             className={`bg-white rounded-xl border ${

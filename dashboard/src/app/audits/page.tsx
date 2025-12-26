@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { FileSearch, Plus, Download, Eye, Calendar, RefreshCw } from 'lucide-react';
 import api from '@/lib/api';
 import { useState } from 'react';
+import type { Audit } from '@/types';
 
 export default function AuditsPage() {
   const queryClient = useQueryClient();
@@ -106,7 +107,7 @@ export default function AuditsPage() {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {audits?.map((audit: any) => (
+            {audits?.map((audit: Audit) => (
               <tr key={audit.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">

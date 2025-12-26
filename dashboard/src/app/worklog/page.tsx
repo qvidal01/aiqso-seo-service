@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Clock, Plus, DollarSign, Calendar, Tag } from 'lucide-react';
 import api from '@/lib/api';
 import { useState } from 'react';
+import type { WorklogEntry } from '@/types';
 
 const categoryColors: Record<string, string> = {
   audit: 'bg-blue-100 text-blue-800',
@@ -99,7 +100,7 @@ export default function WorklogPage() {
         </div>
 
         <div className="divide-y divide-gray-200">
-          {worklog?.entries?.map((entry: any) => (
+          {worklog?.entries?.map((entry: WorklogEntry) => (
             <div key={entry.id} className="px-6 py-4 hover:bg-gray-50">
               <div className="flex items-start justify-between">
                 <div className="flex-1">

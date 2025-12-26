@@ -6,6 +6,7 @@ import Link from 'next/link';
 import api from '@/lib/api';
 import StatsCard from '@/components/StatsCard';
 import ScoreCard from '@/components/ScoreCard';
+import type { Audit, Issue } from '@/types';
 
 export default function DashboardPage() {
   const { data: dashboard, isLoading } = useQuery({
@@ -64,7 +65,7 @@ export default function DashboardPage() {
             </Link>
           </div>
           <div className="space-y-3">
-            {dashboard?.recent_audits?.map((audit: any) => (
+            {dashboard?.recent_audits?.map((audit: Audit) => (
               <div
                 key={audit.id}
                 className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0"
@@ -111,7 +112,7 @@ export default function DashboardPage() {
             </Link>
           </div>
           <div className="space-y-3">
-            {dashboard?.top_issues?.map((issue: any) => (
+            {dashboard?.top_issues?.map((issue: Issue) => (
               <div
                 key={issue.id}
                 className="flex items-start space-x-3 py-2 border-b border-gray-100 last:border-0"

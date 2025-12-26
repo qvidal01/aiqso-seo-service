@@ -1,6 +1,5 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
 import { User, Bell, Key, Link2, Shield, Save } from 'lucide-react';
 import { useState } from 'react';
 
