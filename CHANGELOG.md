@@ -11,9 +11,12 @@ All notable changes to this repository are documented in this file.
   - `requirements-dev.txt` with development dependencies
   - GitHub Actions CI workflow (`.github/workflows/ci.yml`)
     - Python lint, typecheck (non-blocking), and test jobs (Python 3.11/3.12)
-    - Dashboard lint (non-blocking), typecheck (non-blocking), and build (non-blocking) jobs
+    - Dashboard lint, typecheck, and build jobs (now strict after type fixes)
     - Docker build verification
-    - Note: Some checks are non-blocking due to pre-existing issues in the codebase
+- **Dashboard Type Safety**
+  - Created `src/types/index.ts` with TypeScript interfaces for all API responses
+  - Fixed all 14 `@typescript-eslint/no-explicit-any` errors
+  - Removed unused imports
 - **Dashboard Tooling**
   - Prettier configuration (`.prettierrc.json`)
   - Husky + lint-staged for pre-commit hooks
