@@ -20,7 +20,7 @@ All notable changes to this repository are documented in this file.
 
 ### Security
 - **python-multipart** 0.0.6 → 0.0.21 (CVE-2024-53981, CVE-2024-24762)
-- **aiohttp** 3.9.1 → 3.11.14 (CVE-2024-52304, CVE-2024-30251, CVE-2024-23334)
+- **aiohttp** 3.9.1 → 3.12.14 (CVE-2024-52304, CVE-2024-30251, CVE-2024-23334, request smuggling fix)
 - **jinja2** 3.1.3 → 3.1.6 (CVE-2024-56326, CVE-2024-56201, CVE-2025-27516)
 - Removed unused **python-jose** dependency (CVE-2024-33663, CVE-2024-33664)
 
