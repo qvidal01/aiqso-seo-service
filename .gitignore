@@ -64,3 +64,6 @@ celerybeat.pid
 # OS
 .DS_Store
 Thumbs.db
+
+# MkDocs build
+site/

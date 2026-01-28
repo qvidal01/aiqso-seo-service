@@ -1,9 +1,9 @@
 site_name: aiqso-seo-service
 site_description: SEO Auditing & Rank Tracking Service - Enterprise SEO intelligence platform
-site_url: https://qvidal01.github.io/aiqso-seo-service/
+site_url: https://AIQSO.github.io/aiqso-seo-service/
 
-repo_name: qvidal01/aiqso-seo-service
-repo_url: https://github.com/qvidal01/aiqso-seo-service
+repo_name: AIQSO/aiqso-seo-service
+repo_url: https://github.com/AIQSO/aiqso-seo-service
 edit_uri: edit/main/docs/
 
 theme:
@@ -26,10 +26,12 @@ theme:
     - navigation.tracking
     - navigation.tabs
     - navigation.sections
+    - navigation.expand
     - navigation.top
     - search.suggest
     - search.highlight
     - content.code.copy
+    - content.code.annotate
   icon:
     repo: fontawesome/brands/github
 
@@ -39,6 +41,8 @@ plugins:
 markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
@@ -49,8 +53,22 @@ markdown_extensions:
   - tables
   - toc:
       permalink: true
+  - attr_list
+  - md_in_html
 
 nav:
   - Home: index.md
-  - Getting Started: getting-started.md
-  - API Reference: api.md
+  - Getting Started:
+    - Installation: getting-started/installation.md
+    - Quick Start: getting-started/quickstart.md
+    - Configuration: getting-started/configuration.md
+  - User Guide:
+    - CLI Reference: guide/cli.md
+    - Examples: guide/examples.md
+  - API Reference: api/reference.md
+  - Changelog: changelog.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/AIQSO/aiqso-seo-service
