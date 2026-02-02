@@ -1,0 +1,59 @@
+# Agency Tier - White Label Plan
+# Full platform access with white-label branding
+
+name: agency
+display_name: "Agency"
+description: "White-label SEO platform for agencies"
+price_monthly: 799
+price_annually: 7670  # ~20% discount
+
+# Rate limits
+rate_limits:
+  audits_per_day: 1000
+  audits_per_hour: 200
+  keywords_tracked: 10000
+  websites: 100
+
+# Features
+features:
+  ai_insights: true
+  lighthouse_integration: true
+  full_site_crawl: true
+  api_access: true
+  cli_access: true
+  pdf_reports: true
+  white_label: true
+  priority_support: true
+
+# Any domain allowed
+allowed_domains: null
+
+# Audit settings
+audit_settings:
+  max_pages_per_crawl: 1000
+  max_depth: 10
+  include_lighthouse: true
+  include_ai_insights: true
+  concurrent_requests: 20
+
+# Authentication
+auth:
+  type: api_key
+  require_auth: true
+
+# Billing
+billing:
+  stripe_price_id_monthly: price_agency_monthly
+  stripe_price_id_annually: price_agency_annually
+  trial_days: 14
+
+# Agency features
+agency_settings:
+  white_label_branding: true
+  custom_domain: true
+  client_management: true
+  sub_accounts: 50
+  dedicated_support: true
+  custom_integrations: true
+  sla_uptime: 99.9
+  api_rate_limit_multiplier: 2

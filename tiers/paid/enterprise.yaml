@@ -1,0 +1,54 @@
+# Enterprise Tier - Business Plan
+# Full-featured SEO for larger organizations
+
+name: enterprise
+display_name: "Enterprise"
+description: "Full-featured SEO platform for larger organizations"
+price_monthly: 399
+price_annually: 3830  # ~20% discount
+
+# Rate limits
+rate_limits:
+  audits_per_day: 200
+  audits_per_hour: 50
+  keywords_tracked: 1000
+  websites: 10
+
+# Features
+features:
+  ai_insights: true
+  lighthouse_integration: true
+  full_site_crawl: true
+  api_access: true
+  cli_access: true
+  pdf_reports: true
+  white_label: false
+  priority_support: true
+
+# Any domain allowed
+allowed_domains: null
+
+# Audit settings
+audit_settings:
+  max_pages_per_crawl: 500
+  max_depth: 7
+  include_lighthouse: true
+  include_ai_insights: true
+  concurrent_requests: 10
+
+# Authentication
+auth:
+  type: api_key
+  require_auth: true
+
+# Billing
+billing:
+  stripe_price_id_monthly: price_enterprise_monthly
+  stripe_price_id_annually: price_enterprise_annually
+  trial_days: 14
+
+# Enterprise features
+enterprise_settings:
+  dedicated_support: true
+  custom_integrations: false
+  sla_uptime: 99.5

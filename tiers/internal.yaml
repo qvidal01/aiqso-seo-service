@@ -1,0 +1,40 @@
+# Internal Tier - AIQSO Team Only
+# No limits, full access for internal websites
+
+name: internal
+display_name: "Internal Use"
+description: "Full access for AIQSO team - no limits"
+
+# No rate limiting
+rate_limits:
+  audits_per_day: null  # unlimited
+  audits_per_hour: null
+  keywords_tracked: null
+  websites: null
+
+# Full feature access
+features:
+  ai_insights: true
+  lighthouse_integration: true
+  full_site_crawl: true
+  api_access: true
+  cli_access: true
+  pdf_reports: true
+  white_label: false
+  priority_support: true
+
+# Allowed domains (null = any domain)
+allowed_domains: null
+
+# Audit settings
+audit_settings:
+  max_pages_per_crawl: 1000
+  max_depth: 10
+  include_lighthouse: true
+  include_ai_insights: true
+  concurrent_requests: 10
+
+# Authentication
+auth:
+  type: api_key
+  require_auth: true

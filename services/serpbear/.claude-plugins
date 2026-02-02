@@ -1,0 +1,15 @@
+# Claude Code Context Profile
+# Generated: Fri Dec 26 10:46:09 CST 2025
+# Project: serpbear
+#
+# Run: claude-plugins auto   to apply this profile
+
+profile=nextjs-frontend
+
+# Detected: 5 plugins, 1 MCP servers
+
+# Override section (uncomment to customize):
+# +mcp:ollama          # Add MCP server
+# -mcp:docker          # Remove MCP server
+# +plugin:my-plugin@marketplace
+# -plugin:some-plugin@marketplace

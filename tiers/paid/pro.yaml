@@ -1,0 +1,48 @@
+# Pro Tier - Professional Plan
+# Advanced SEO for growing businesses
+
+name: pro
+display_name: "Professional"
+description: "Advanced SEO monitoring with AI insights"
+price_monthly: 149
+price_annually: 1430  # ~20% discount
+
+# Rate limits
+rate_limits:
+  audits_per_day: 50
+  audits_per_hour: 20
+  keywords_tracked: 200
+  websites: 3
+
+# Features
+features:
+  ai_insights: true
+  lighthouse_integration: true
+  full_site_crawl: true
+  api_access: true
+  cli_access: true
+  pdf_reports: true
+  white_label: false
+  priority_support: false
+
+# Any domain allowed
+allowed_domains: null
+
+# Audit settings
+audit_settings:
+  max_pages_per_crawl: 200
+  max_depth: 5
+  include_lighthouse: true
+  include_ai_insights: true
+  concurrent_requests: 5
+
+# Authentication
+auth:
+  type: api_key
+  require_auth: true
+
+# Billing
+billing:
+  stripe_price_id_monthly: price_pro_monthly
+  stripe_price_id_annually: price_pro_annually
+  trial_days: 14
