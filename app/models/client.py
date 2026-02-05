@@ -86,6 +86,7 @@ class Client(Base, TimestampMixin):
     # Relationships
     websites = relationship("Website", back_populates="client", cascade="all, delete-orphan")
     reports = relationship("Report", back_populates="client", cascade="all, delete-orphan")
+    audit_logs = relationship("AuditLog", back_populates="client", cascade="all, delete-orphan")
 
     def get_tier_limits(self):
         """Get the limits for this client's tier."""
