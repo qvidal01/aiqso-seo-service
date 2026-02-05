@@ -4,7 +4,7 @@ Billing API Router
 Endpoints for subscription management and payments.
 """
 
-from fastapi import APIRouter, Depends, HTTPException, Request, Header
+from fastapi import APIRouter, Depends, HTTPException, Request, Header, status
 from sqlalchemy.orm import Session
 from typing import Optional
 from pydantic import BaseModel
@@ -134,12 +134,20 @@ def get_subscription(
     db: Session = Depends(get_db),
 ):
     """Get current subscription status."""
+    # Ownership validation: Filter by authenticated client's ID to prevent cross-client access
     subscription = db.query(Subscription).filter(
         Subscription.client_id == client.id
     ).order_by(Subscription.created_at.desc()).first()
 
     if not subscription:
         return None
+
+    # Explicit ownership check: Verify subscription belongs to authenticated client
+    if subscription.client_id != client.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access denied: subscription belongs to another client"
+        )
 
     return SubscriptionResponse(
         id=subscription.id,
@@ -158,6 +166,7 @@ def get_usage(
     db: Session = Depends(get_db),
 ):
     """Get current usage for this billing period."""
+    # Ownership validation: Only return usage for authenticated client
     stripe_service = StripeService(db)
     usage = stripe_service.get_usage_summary(client.id)
     return UsageResponse(**usage)
@@ -185,6 +194,8 @@ def cancel_subscription(
     db: Session = Depends(get_db),
 ):
     """Cancel the current subscription."""
+    # Ownership validation: StripeService.cancel_subscription filters by client.id
+    # to ensure only the authenticated client's subscription can be canceled
     stripe_service = StripeService(db)
 
     if stripe_service.cancel_subscription(client, at_period_end):
