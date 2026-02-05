@@ -22,6 +22,7 @@ from app.models import (
     Payment,
     UsageRecord,
     WorkLog,
+    AuditLog,
 )
 
 # this is the Alembic Config object, which provides

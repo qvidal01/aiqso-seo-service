@@ -6,6 +6,7 @@ from app.models.keyword import Keyword, KeywordRanking
 from app.models.report import Report
 from app.models.billing import Subscription, Payment, UsageRecord, SubscriptionStatus, PaymentStatus
 from app.models.worklog import WorkLog, Project, IssueTracker, WorkCategory, WorkStatus
+from app.models.audit_log import AuditLog
 
 __all__ = [
     "Base",
@@ -30,4 +31,5 @@ __all__ = [
     "IssueTracker",
     "WorkCategory",
     "WorkStatus",
+    "AuditLog",
 ]
