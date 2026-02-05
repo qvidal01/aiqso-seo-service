@@ -194,9 +194,21 @@ def get_billing_portal(
 ):
     """Get Stripe Billing Portal URL for self-service."""
     stripe_service = StripeService(db)
+    audit_service = AuditService(db)
 
     try:
         url = stripe_service.create_billing_portal_session(client)
+
+        # Log portal access
+        audit_service.log_action(
+            client=client,
+            action="portal_accessed",
+            resource_type="billing_portal",
+            extra_data={
+                "portal_url": url,
+            },
+        )
+
         return {"url": url}
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
