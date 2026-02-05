@@ -38,6 +38,8 @@ def require_client(
         client = db.query(Client).filter(Client.api_key == api_key).first()
         if not client:
             raise HTTPException(status_code=401, detail="Invalid API key")
+        if not client.is_active:
+            raise HTTPException(status_code=401, detail="Client is not active")
         return client
     finally:
         db.close()
