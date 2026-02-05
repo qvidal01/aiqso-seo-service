@@ -16,6 +16,7 @@ from app.config import get_settings
 from app.models.client import Client
 from app.models.billing import Subscription, Payment, SubscriptionStatus
 from app.services.stripe_service import StripeService, STRIPE_PRICES
+from app.services.audit_service import AuditService
 from app.security import require_client
 
 settings = get_settings()
@@ -114,6 +115,7 @@ def create_checkout_session(
 ):
     """Create a Stripe Checkout session for subscription."""
     stripe_service = StripeService(db)
+    audit_service = AuditService(db)
 
     try:
         result = stripe_service.create_checkout_session(
@@ -123,6 +125,19 @@ def create_checkout_session(
             success_url=request.success_url,
             cancel_url=request.cancel_url,
         )
+
+        # Log checkout session creation
+        audit_service.log_action(
+            client=client,
+            action="checkout_created",
+            resource_type="checkout_session",
+            extra_data={
+                "tier": request.tier,
+                "interval": request.interval,
+                "session_id": result.get("session_id"),
+            },
+        )
+
         return CheckoutResponse(**result)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
