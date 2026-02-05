@@ -294,6 +294,7 @@ async def stripe_webhook(
         raise HTTPException(status_code=400, detail="Invalid signature")
 
     stripe_service = StripeService(db)
+    audit_service = AuditService(db)
 
     # Handle events
     if event["type"] == "checkout.session.completed":
@@ -303,7 +304,7 @@ async def stripe_webhook(
 
         client = db.query(Client).filter(Client.id == client_id).first()
         if client:
-            stripe_service.create_subscription(
+            subscription = stripe_service.create_subscription(
                 client=client,
                 stripe_subscription_id=session["subscription"],
                 stripe_customer_id=session["customer"],
@@ -311,22 +312,70 @@ async def stripe_webhook(
                 status="active",
             )
 
+            # Log subscription creation
+            audit_service.log_action(
+                client=client,
+                action="subscription_created",
+                resource_type="subscription",
+                resource_id=subscription.id if subscription else None,
+                extra_data={
+                    "tier": tier,
+                    "stripe_subscription_id": session["subscription"],
+                    "stripe_customer_id": session["customer"],
+                    "event_type": event["type"],
+                },
+            )
+
     elif event["type"] == "customer.subscription.updated":
         subscription = event["data"]["object"]
-        stripe_service.update_subscription_status(
+        updated_subscription = stripe_service.update_subscription_status(
             stripe_subscription_id=subscription["id"],
             status=subscription["status"],
             current_period_start=datetime.fromtimestamp(subscription["current_period_start"]),
             current_period_end=datetime.fromtimestamp(subscription["current_period_end"]),
         )
 
+        # Log subscription update
+        if updated_subscription:
+            client = db.query(Client).filter(Client.id == updated_subscription.client_id).first()
+            if client:
+                audit_service.log_action(
+                    client=client,
+                    action="subscription_updated",
+                    resource_type="subscription",
+                    resource_id=updated_subscription.id,
+                    extra_data={
+                        "status": subscription["status"],
+                        "stripe_subscription_id": subscription["id"],
+                        "current_period_start": datetime.fromtimestamp(subscription["current_period_start"]).isoformat(),
+                        "current_period_end": datetime.fromtimestamp(subscription["current_period_end"]).isoformat(),
+                        "event_type": event["type"],
+                    },
+                )
+
     elif event["type"] == "customer.subscription.deleted":
         subscription = event["data"]["object"]
-        stripe_service.update_subscription_status(
+        deleted_subscription = stripe_service.update_subscription_status(
             stripe_subscription_id=subscription["id"],
             status="canceled",
             canceled_at=datetime.utcnow(),
         )
+
+        # Log subscription deletion
+        if deleted_subscription:
+            client = db.query(Client).filter(Client.id == deleted_subscription.client_id).first()
+            if client:
+                audit_service.log_action(
+                    client=client,
+                    action="subscription_deleted",
+                    resource_type="subscription",
+                    resource_id=deleted_subscription.id,
+                    extra_data={
+                        "stripe_subscription_id": subscription["id"],
+                        "canceled_at": datetime.utcnow().isoformat(),
+                        "event_type": event["type"],
+                    },
+                )
 
     elif event["type"] == "invoice.paid":
         invoice = event["data"]["object"]
@@ -336,7 +385,7 @@ async def stripe_webhook(
         ).first()
 
         if sub:
-            stripe_service.record_payment(
+            payment = stripe_service.record_payment(
                 client_id=sub.client_id,
                 stripe_payment_intent_id=invoice["payment_intent"],
                 amount_cents=invoice["amount_paid"],
@@ -344,5 +393,23 @@ async def stripe_webhook(
                 description=f"Invoice {invoice['number']}",
                 subscription_id=sub.id,
             )
+
+            # Log payment received
+            client = db.query(Client).filter(Client.id == sub.client_id).first()
+            if client:
+                audit_service.log_action(
+                    client=client,
+                    action="payment_received",
+                    resource_type="payment",
+                    resource_id=payment.id if payment else None,
+                    extra_data={
+                        "amount_cents": invoice["amount_paid"],
+                        "currency": invoice.get("currency", "usd"),
+                        "invoice_number": invoice.get("number"),
+                        "stripe_payment_intent_id": invoice["payment_intent"],
+                        "subscription_id": sub.id,
+                        "event_type": event["type"],
+                    },
+                )
 
     return {"received": True}
