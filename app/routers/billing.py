@@ -212,8 +212,19 @@ def cancel_subscription(
     # Ownership validation: StripeService.cancel_subscription filters by client.id
     # to ensure only the authenticated client's subscription can be canceled
     stripe_service = StripeService(db)
+    audit_service = AuditService(db)
 
     if stripe_service.cancel_subscription(client, at_period_end):
+        # Log subscription cancellation
+        audit_service.log_action(
+            client=client,
+            action="subscription_cancelled",
+            resource_type="subscription",
+            extra_data={
+                "at_period_end": at_period_end,
+            },
+        )
+
         return {"message": "Subscription will be canceled" + (" at period end" if at_period_end else " immediately")}
     else:
         raise HTTPException(status_code=400, detail="No active subscription to cancel")
