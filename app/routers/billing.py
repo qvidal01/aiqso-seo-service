@@ -16,6 +16,7 @@ from app.config import get_settings
 from app.models.client import Client
 from app.models.billing import Subscription, Payment, SubscriptionStatus
 from app.services.stripe_service import StripeService, STRIPE_PRICES
+from app.security import require_client
 
 settings = get_settings()
 router = APIRouter(prefix="/billing", tags=["Billing"])
@@ -50,22 +51,6 @@ class UsageResponse(BaseModel):
     total_keywords: int
     period_start: str
     period_end: str
-
-
-# Helper to get current client (simplified - you'd have proper auth)
-def get_current_client(
-    api_key: str = Header(None, alias="X-API-Key"),
-    db: Session = Depends(get_db)
-) -> Client:
-    """Get client from API key."""
-    if not api_key:
-        raise HTTPException(status_code=401, detail="API key required")
-
-    client = db.query(Client).filter(Client.api_key == api_key).first()
-    if not client:
-        raise HTTPException(status_code=401, detail="Invalid API key")
-
-    return client
 
 
 # Public endpoints (no authentication required)
@@ -120,11 +105,11 @@ def get_tier_features(tier: str) -> dict:
     return features.get(tier, features["starter"])
 
 
-# Protected endpoints (authentication required via get_current_client dependency)
+# Protected endpoints (authentication required via require_client dependency)
 @router.post("/checkout", response_model=CheckoutResponse)
 def create_checkout_session(
     request: CheckoutRequest,
-    client: Client = Depends(get_current_client),
+    client: Client = Depends(require_client),
     db: Session = Depends(get_db),
 ):
     """Create a Stripe Checkout session for subscription."""
@@ -145,7 +130,7 @@ def create_checkout_session(
 
 @router.get("/subscription", response_model=Optional[SubscriptionResponse])
 def get_subscription(
-    client: Client = Depends(get_current_client),
+    client: Client = Depends(require_client),
     db: Session = Depends(get_db),
 ):
     """Get current subscription status."""
@@ -169,7 +154,7 @@ def get_subscription(
 
 @router.get("/usage", response_model=UsageResponse)
 def get_usage(
-    client: Client = Depends(get_current_client),
+    client: Client = Depends(require_client),
     db: Session = Depends(get_db),
 ):
     """Get current usage for this billing period."""
@@ -180,7 +165,7 @@ def get_usage(
 
 @router.post("/portal")
 def get_billing_portal(
-    client: Client = Depends(get_current_client),
+    client: Client = Depends(require_client),
     db: Session = Depends(get_db),
 ):
     """Get Stripe Billing Portal URL for self-service."""
@@ -196,7 +181,7 @@ def get_billing_portal(
 @router.post("/cancel")
 def cancel_subscription(
     at_period_end: bool = True,
-    client: Client = Depends(get_current_client),
+    client: Client = Depends(require_client),
     db: Session = Depends(get_db),
 ):
     """Cancel the current subscription."""
@@ -211,7 +196,7 @@ def cancel_subscription(
 @router.get("/payments")
 def list_payments(
     limit: int = 20,
-    client: Client = Depends(get_current_client),
+    client: Client = Depends(require_client),
     db: Session = Depends(get_db),
 ):
     """List payment history."""
