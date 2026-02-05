@@ -97,7 +97,12 @@ app.include_router(
 )
 
 # New routers for customer platform
-app.include_router(billing.router, prefix=f"{settings.api_prefix}", tags=["Billing"])
+app.include_router(
+    billing.router,
+    prefix=f"{settings.api_prefix}",
+    tags=["Billing"],
+    dependencies=auth_dependencies,
+)
 app.include_router(
     worklog.router,
     prefix=f"{settings.api_prefix}",
